@@ -8,9 +8,21 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QMessageBox>
+
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
+
+enum pieceType { Rook = 'r', Knight = 'n', Bishop = 'b', Queen = 'q', King = 'k', Pawn ='p', Empty = ' ' };
+enum pieceColor { White = 'w', Black = 'b' };
+
+struct boardElement {
+    pieceType piece;
+    pieceColor color;
+    QGraphicsPixmapItem *icon;
+    int xPos;
+    int yPos;
+};
 
 class MainWindow : public QMainWindow
 {
@@ -19,9 +31,13 @@ class MainWindow : public QMainWindow
     QVector<QGraphicsPixmapItem*> whiteFigures;
     QVector<QGraphicsPixmapItem*> blackFigures;
 
+    boardElement board[8][8];
+
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     void mkBoard();
+    void drawBoard();
+    void drawFigure(boardElement);
     ~MainWindow();
 
 private:
