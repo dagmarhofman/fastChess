@@ -9,7 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setWindowTitle(trUtf8("Chess"));
 
-    mkBoard();
+    initBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    drawBoard();
 
 }
 
@@ -18,143 +19,18 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::mkBoard()
-{
-    scene = new QGraphicsScene(this);
-    scene->setSceneRect(0, 0, 800, 800);
-    scene->setBackgroundBrush(Qt::lightGray);
-    ui->graphicsView->setScene(scene);
-
-
-    bool isWhite = true;  //Рисуем  игральну доску
-    for(int y = 0; y < 800; y += 100)
-    {
-        for(int x = 0; x < 800; x += 100)
-        {
-            QBrush brush;
-            if(isWhite) brush = QBrush(Qt::white);
-            else brush = QBrush(Qt::gray);
-            scene->addRect(x, y, 100, 100, QPen(Qt::black), brush);
-
-            if(isWhite) isWhite = false;
-            else isWhite = true;
-        }
-        if(isWhite) isWhite = false;
-        else isWhite = true;
-    }
-
-      int posX = 0;
-      int posY = 0;
-
-      for(posX = 0; posX<800; posX += 700)
-      {
-          figure = scene->addPixmap(QPixmap("://images/black_rook.png"));
-          figure->setPos(posX, posY);
-          if(figure) blackFigures.append(figure);
-          figure->setData(0, "Rook");
-      }
-
-      posX = 100;
-      for(posX = 100; posX<800; posX += 500)
-      {
-      figure = scene->addPixmap(QPixmap("://images/black_horse.png"));
-      figure->setPos(posX, posY);
-      if(figure) blackFigures.append(figure);
-      figure->setData(0,"Horse");
-      }
-
-      posX = 200;
-      for(posX=200; posX<800; posX +=300)
-      {
-      figure = scene->addPixmap(QPixmap("://images/black_bishop.png"));
-      figure->setPos(posX, posY);
-      if(figure) blackFigures.append(figure);
-      figure->setData(0, "Bishop");
-      }
-
-      posX = 300;
-      figure = scene->addPixmap(QPixmap("://images/black_queen.png"));
-      figure->setPos(posX, posY);
-      if(figure) blackFigures.append(figure);
-      figure->setData(0, "Queen");
-
-      posX = 400;
-      figure = scene->addPixmap(QPixmap("://images/black_king.png"));
-      figure->setPos(posX, posY);
-      if(figure) blackFigures.append(figure);
-      figure->setData(0, "King");
-
-
-      posX = 0;
-      posY = 700;
-
-      for(posX = 0; posX<800; posX += 700)
-      {
-      figure = scene->addPixmap(QPixmap("://images/white_rook.png"));
-      figure->setPos(posX, posY);
-      if(figure) whiteFigures.append(figure);
-      figure->setData(0, "Rook");
-      }
-
-      posX = 100;
-      for(posX = 100; posX<800; posX += 500)
-      {
-      figure = scene->addPixmap(QPixmap("://images/white_horse.png"));
-      figure->setPos(posX, posY);
-      if(figure) whiteFigures.append(figure);
-      figure->setData(0, "Horse");
-      }
-
-      posX = 200;
-      for(posX=200; posX<800; posX +=300)
-      {
-      figure = scene->addPixmap(QPixmap("://images/white_bishop.png"));
-      figure->setPos(posX, posY);
-      if(figure) whiteFigures.append(figure);
-      figure->setData(0, "Bishop");
-      }
-
-      posX = 300;
-      figure = scene->addPixmap(QPixmap("://images/white_queen.png"));
-      figure->setPos(posX, posY);
-      if(figure) whiteFigures.append(figure);
-      figure->setData(0, "Queen");
-
-      posX = 400;
-      figure = scene->addPixmap(QPixmap("://images/white_king.png"));
-      figure->setPos(posX, posY);
-      if(figure) whiteFigures.append(figure);
-      figure->setData(0, "King");
-
-      posY = 100;
-      for(posX = 0; posX < 800; posX += 100)
-      {
-          figure = scene->addPixmap(QPixmap("://images/black_pawn.png"));
-          figure->setPos(posX, posY);
-          if(figure) blackFigures.append(figure);
-          figure->setData(0, "Pawn");
-      }
-
-      posY = 600;
-      for(posX = 0; posX < 800; posX += 100)
-      {
-          figure = scene->addPixmap(QPixmap("://images/white_pawn.png"));
-          figure->setPos(posX, posY);
-          if(figure) whiteFigures.append(figure);
-          figure->setData(0, "Pawn");
-      }
-}
 
 void MainWindow::drawFigure( boardElement el )
 {
-
     switch( el.piece ) {
-        case Rook:
+        case 'r':
         if( el.color == Black )
             figure = scene->addPixmap(QPixmap("://images/black_rook.png"));
         else if( el.color == White )
             figure = scene->addPixmap(QPixmap("://images/white_rook.png"));
+        whiteFigures.append(figure);
         figure->setData(0, "Rook");
+        figure->setPos( el.xPos, el.yPos);
         break;
         case Bishop:
         if( el.color == Black )
@@ -162,13 +38,16 @@ void MainWindow::drawFigure( boardElement el )
         else if( el.color == White )
             figure = scene->addPixmap(QPixmap("://images/white_bishop.png"));
         figure->setData(0, "Bishop");
+        figure->setPos(el.xPos, el.yPos);
         break;
         case King:
         if( el.color == Black )
             figure = scene->addPixmap(QPixmap("://images/black_king.png"));
         else if( el.color == White )
             figure = scene->addPixmap(QPixmap("://images/white_king.png"));
+
         figure->setData(0, "King");
+        figure->setPos(el.xPos, el.yPos);
         break;
         case Queen:
         if( el.color == Black )
@@ -176,6 +55,7 @@ void MainWindow::drawFigure( boardElement el )
         else if( el.color == White )
             figure = scene->addPixmap(QPixmap("://images/white_queen.png"));
         figure->setData(0, "Queen");
+        figure->setPos(el.xPos, el.yPos);
         break;
         case Pawn:
         if( el.color == Black )
@@ -183,25 +63,130 @@ void MainWindow::drawFigure( boardElement el )
         else if( el.color == White )
             figure = scene->addPixmap(QPixmap("://images/white_pawn.png"));
         figure->setData(0, "Pawn");
+        figure->setPos(el.xPos, el.yPos);
         break;
         case Knight:
         if( el.color == Black )
-            figure = scene->addPixmap(QPixmap("://images/black_knight.png"));
+            figure = scene->addPixmap(QPixmap("://images/black_horse.png"));
         else if( el.color == White )
-            figure = scene->addPixmap(QPixmap("://images/white_knight.png"));
+            figure = scene->addPixmap(QPixmap("://images/white_horse.png"));
         figure->setData(0, "Knight");
+        figure->setPos(el.xPos, el.yPos);
         break;
         case Empty:
         break;
+    }
+
+    if( el.color == Black ) {
+        if(figure) blackFigures.append(figure);
+    }
+    else if( el.color == White )
+    {
+        if(figure) whiteFigures.append(figure);
+    }
+
+}
+
+
+void MainWindow::initBoard( QString fen )
+{
+    //QString fenTestStr();
+
+    char c = '\0';
+    int thisChar;
+    int rowNum=0, colNum=0;
+
+    int i;
+    int j;
+
+    for(i = 0; i < 8;i++) {
+        for(j = 0; j < 8;j++) {
+            board[j][i].piece = Empty;
+            board[j][i].color = White;
+        }
+    }
+
+    for (i = 0; c != ' ' ; i++)
+    {
+        c = fen.toStdString().c_str()[i];
+        thisChar = c - '0';
+
+        if (c == '/')
+        {
+            rowNum++;
+            colNum = 0;
+        } else if(thisChar > 0 && thisChar <= 9)
+        {
+            for (int j = 0; j < thisChar; j++)
+            {
+                board[rowNum][colNum].piece = Empty;
+                board[rowNum][colNum].color = White;
+                colNum++;
+            }
+        } else {
+            switch(c)
+            {
+            case 'R':
+                board[rowNum][colNum].piece = Rook;
+                board[rowNum][colNum].color = White;
+                break;
+            case 'N':
+                board[rowNum][colNum].piece = Knight;
+                board[rowNum][colNum].color = White;
+                break;
+            case 'B':
+                board[rowNum][colNum].piece = Bishop;
+                board[rowNum][colNum].color = White;
+                break;
+            case 'K':
+                board[rowNum][colNum].piece = King;
+                board[rowNum][colNum].color = White;
+                break;
+            case 'Q':
+                board[rowNum][colNum].piece = Queen;
+                board[rowNum][colNum].color = White;
+                break;
+            case 'P':
+                board[rowNum][colNum].piece = Pawn;
+                board[rowNum][colNum].color = White;
+                break;
+            case 'r':
+                board[rowNum][colNum].piece = Rook;
+                board[rowNum][colNum].color = Black;
+                break;
+            case 'n':
+                board[rowNum][colNum].piece = Knight;
+                board[rowNum][colNum].color = Black;
+                break;
+            case 'b':
+                board[rowNum][colNum].piece = Bishop;
+                board[rowNum][colNum].color = Black;
+                break;
+            case 'k':
+                board[rowNum][colNum].piece = King;
+                board[rowNum][colNum].color = Black;
+                break;
+            case 'q':
+                board[rowNum][colNum].piece = Queen;
+                board[rowNum][colNum].color = Black;
+                break;
+            case 'p':
+                board[rowNum][colNum].piece = Pawn;
+                board[rowNum][colNum].color = Black;
+                break;
+            }
+            colNum++;
+        }
 
     }
-    figure->setPos(el.xPos, el.yPos);
 
-    if( el.color == Black )
-        if(figure) blackFigures.append(figure);
-    else if( el.color == White )
-        if(figure) whiteFigures.append(figure);
 
+}
+
+
+void MainWindow :: swapBoard()
+{
+    this->boardViewBlack = !this->boardViewBlack;
 }
 
 void MainWindow::drawBoard()
@@ -212,7 +197,6 @@ void MainWindow::drawBoard()
     ui->graphicsView->setScene(scene);
 
     bool isWhite = true;
-    int i=0,j=0;
     for(int y = 0; y < 800; y += 100)
     {
         for(int x = 0; x < 800; x += 100)
@@ -221,18 +205,34 @@ void MainWindow::drawBoard()
             if(isWhite) brush = QBrush(Qt::white);
             else brush = QBrush(Qt::gray);
             scene->addRect(x, y, 100, 100, QPen(Qt::black), brush);
-            this->drawFigure(board[i][j]);
             if(isWhite) isWhite = false;
             else isWhite = true;
-            i++;
         }
         if(isWhite) isWhite = false;
         else isWhite = true;
-        j++;
     }
 
+    int row =0, col=0;
 
+    for(int col = 0; col < 8; col++)
+    {
+        for(int row = 0; row < 8; row++ )
+        {
+            if( this->boardViewBlack ) {
+                board[row][col].xPos = col * 100;
+                board[row][col].yPos = (7 - row) * 100;
+            } else {
+                board[row][col].xPos = col * 100;
+                board[row][col].yPos = row * 100;
+            }
+            this->drawFigure(board[row][col]);
+        }
+    }
 
+}
 
-
+void MainWindow::on_pushButton_clicked()
+{
+    swapBoard();
+    drawBoard();
 }

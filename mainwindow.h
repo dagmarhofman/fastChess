@@ -35,15 +35,20 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    void mkBoard();
+    void initBoard(QString fen);
     void drawBoard();
     void drawFigure(boardElement);
+    void swapBoard();
     ~MainWindow();
+
+private slots:
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
     QGraphicsPixmapItem *figure;
+    bool boardViewBlack = false;
 };
 
 #endif // MAINWINDOW_H
