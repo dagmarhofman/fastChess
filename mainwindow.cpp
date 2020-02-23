@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -8,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowTitle(trUtf8("Chess"));
+
+    parseJSON();
 
     initBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     drawBoard();
@@ -17,6 +20,36 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::parseJSON()
+{
+
+    QString data;
+    QString fileName(":/eco_openings.txt");
+
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly)) {
+        qDebug()<<"filenot opened"<<endl;
+    }
+    else
+    {
+        qDebug()<<"file opened"<<endl;
+        data = QString(file.readAll());
+    }
+
+    file.close();
+
+    QRegExp regexTags("(\\[|\\])");
+    QStringList tagList = data.split(regexTags);
+
+    for ( const QString& field : tagList  )
+    {
+
+        printf("FIELD : %s\n", field.toStdString().c_str() );
+
+    }
+
 }
 
 
@@ -90,7 +123,6 @@ void MainWindow::drawFigure( boardElement el )
 
 void MainWindow::initBoard( QString fen )
 {
-    //QString fenTestStr();
 
     char c = '\0';
     int thisChar;

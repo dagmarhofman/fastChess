@@ -24,6 +24,13 @@ struct boardElement {
     int yPos;
 };
 
+struct chessMoves {
+    QString eco;
+    QString opening;
+    QString variant;
+    QStringList moves;
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -39,6 +46,7 @@ public:
     void drawBoard();
     void drawFigure(boardElement);
     void swapBoard();
+    void parseJSON();
     ~MainWindow();
 
 private slots:
@@ -49,6 +57,7 @@ private:
     QGraphicsScene *scene;
     QGraphicsPixmapItem *figure;
     bool boardViewBlack = false;
+    QVector<chessMoves *> allMoves;
 };
 
 #endif // MAINWINDOW_H
