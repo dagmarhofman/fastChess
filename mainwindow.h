@@ -8,7 +8,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QMessageBox>
-
+#include <QtXml>
+#include <QFile>
 namespace Ui {
     class MainWindow;
 }
@@ -28,7 +29,7 @@ struct chessMoves {
     QString eco;
     QString opening;
     QString variant;
-    QStringList moves;
+    QStringList chessMoves;
 };
 
 class MainWindow : public QMainWindow
@@ -46,18 +47,29 @@ public:
     void drawBoard();
     void drawFigure(boardElement);
     void swapBoard();
-    void parseJSON();
+    void parseMovesXML();
+    void parseMoves();
     ~MainWindow();
 
 private slots:
     void on_pushButton_clicked();
+
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_5_clicked();
+
+    void on_pushButton_4_clicked();
 
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
     QGraphicsPixmapItem *figure;
     bool boardViewBlack = false;
-    QVector<chessMoves *> allMoves;
+    QList<chessMoves> allMoves;
+    int currentOpening;
+    int currentMove;
 };
 
 #endif // MAINWINDOW_H

@@ -1,0 +1,11 @@
+[ECO "A40"]
+[Opening "Test opening"]
+[Variant "Test Variant"]
+{ rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d3 0 1 }
+{ rnbqkbnr/pppp1ppp/4p3/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2 }
+{ rnbqkbnr/pppp1ppp/4p3/8/3P4/5N2/PPP1PPPP/RNBQKB1R b KQkq - 1 2}
+{ r1bqkbnr/pppp1ppp/2n1p3/8/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq- 2 3 }
+{ r1bqkbnr/pppp1ppp/2n1p3/8/3P4/2N2N2/PPP1PPPP/R1BQKB1R bKQkq - 3 3 }
+{ r1bqkb1r/pppp1ppp/2n1pn2/8/3P4/2N2N2/PPP1PPPP/R1BQKB1R w KQkq - 4 4 }
+{ r1bqkb1r/pppp1ppp/2n1pn2/8/3P4/2N1PN2/PPP2PPP/R1BQKB1R b KQkq - 0 4}
+{ r1bqkb1r/ppp2ppp/2n1pn2/3p4/3P4/2N1PN2/PPP2PPP/R1BQKB1R wKQkq d6 0 5 }
