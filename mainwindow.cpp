@@ -8,10 +8,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
     setWindowTitle(trUtf8("Chess"));
 
     this->currentMove = 0;
-    this->currentOpening = 1410;
+    this->currentOpening = 0;
+    this->openingShowCount = 0;
 
     parseMovesXML();
     for(int i=0;i<allMoves.size();i++) {
@@ -21,15 +23,29 @@ MainWindow::MainWindow(QWidget *parent) :
     initBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     drawBoard();
 
-    ui->ecoLabel->setText(allMoves.at(2010).eco);
-    ui->variantLabel->setText(allMoves.at(2010).variant);
-    ui->openingLabel->setText(allMoves.at(2010).opening);
+    ui->ecoLabel->setAlignment(Qt::AlignCenter);
+    ui->variantLabel->setAlignment(Qt::AlignCenter);
+    ui->openingLabel->setAlignment(Qt::AlignCenter);
+
+    ui->ecoLabel->setStyleSheet("color: blue; ");
+    ui->openingLabel->setStyleSheet("color: blue;");
+    ui->variantLabel->setStyleSheet("color: blue;");
+
+    this->timer = new QTimer(this);
+
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
 
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+
+void MainWindow::showFullScreen()
+{
+    QMainWindow::showFullScreen();
 }
 void MainWindow::parseMovesXML()
 {
@@ -67,6 +83,9 @@ void MainWindow::parseMovesXML()
         QDomElement moveItem = moves.firstChildElement("item");
 
         fieldRecord.chessMoves.clear();
+
+        fieldRecord.chessMoves.append( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" );
+
         for (; !moveItem.isNull(); moveItem = moveItem.nextSiblingElement("item")) {
             FEN = moveItem.firstChildElement("FEN").text().toUtf8();
             fieldRecord.chessMoves.append( FEN );
@@ -80,62 +99,42 @@ void MainWindow::parseMovesXML()
 }
 
 
-void MainWindow::parseMoves()
+void MainWindow::timerSlot()
 {
-/*
+    if(this->currentMove < this->allMoves.at(this->currentOpening).chessMoves.size() - 1 )    {
+        this->currentMove++;
+        initBoard(QString(this->allMoves.at(this->currentOpening).chessMoves.at(this->currentMove)));
+        drawBoard();
+    } else {
 
-    QString data;
-    QString fileName(":/moves.txt");
+        if(this->currentMove < this->allMoves.at(this->currentOpening).chessMoves.size() - 1 )    {
+            initBoard(QString(this->allMoves.at(this->currentOpening).chessMoves.at(this->currentMove)));
+            drawBoard();
+            this->currentMove++;
+        } else {
+            initBoard(QString(this->allMoves.at(this->currentOpening).chessMoves.at(this->currentMove)));
+            drawBoard();
 
-    QFile file(fileName);
-    if(!file.open(QIODevice::ReadOnly)) {
-        qDebug()<<"filenot opened"<<endl;
-    }
-    else
-    {
-        qDebug()<<"file opened"<<endl;
-        data = QString(file.readAll());
-    }
+            this->openingShowCount++;
 
-    file.close();
+            this->currentMove = 0;
 
-    QRegExp regexTags("(\\[|\\])");
-    QStringList tagList = data.split(regexTags);
-
-    chessMoves fieldRecord;
-    for ( const QString& field : tagList  )
-    {
-
-
-        if (field.toStdString().compare(0,7,"Opening") == 0) {
-            fieldRecord.opening = field;
-            continue;
-        } else if (field.toStdString().compare(0,3,"ECO") == 0) {
-            fieldRecord.eco = field;
-            continue;
-        } else if (field.toStdString().compare(0,9,"Variation") == 0) {
-            fieldRecord.variant = field;
-            continue;
-        }
-
-
-        QRegExp regexMoves("(\\{|\\})");
-        QStringList moveList = field.split(regexMoves);
-
-
-        for ( const QString& move : moveList  )
-        {
-            if( move.length() > 2 )
-            {
-                qDebug() << move;
-
-                fieldRecord.moves.append(move);
+            if( this->openingShowCount > 12 ) {
+                this->currentOpening++;
+                this->openingShowCount = 0;
             }
-        }
 
-        this->allMoves.append(fieldRecord);
+
+            initBoard(" rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+            drawBoard();
+            ui->ecoLabel->setText(QString(allMoves.at(this->currentOpening).eco.toUtf8()));
+            ui->variantLabel->setText(QString(allMoves.at(this->currentOpening).variant.toUtf8()));
+            ui->openingLabel->setText(QString(allMoves.at(this->currentOpening).opening.toUtf8()));
+
+
+        }
     }
-    */
+
 }
 
 
@@ -363,17 +362,17 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    qDebug() << allMoves.at(this->currentOpening).opening;
 
-    if(this->currentOpening < this->allMoves.size() )
+    if(this->currentOpening < this->allMoves.size() ) {
         this->currentOpening++;
+    }
 
     ui->ecoLabel->setText(QString(allMoves.at(this->currentOpening).eco.toUtf8()));
     ui->variantLabel->setText(QString(allMoves.at(this->currentOpening).variant.toUtf8()));
     ui->openingLabel->setText(QString(allMoves.at(this->currentOpening).opening.toUtf8()));
 
     this->currentMove = 0;
-    initBoard(" rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+
     drawBoard();
 }
 
@@ -389,7 +388,7 @@ void MainWindow::on_pushButton_3_clicked()
     ui->openingLabel->setText(QString(allMoves.at(this->currentOpening).opening.toUtf8()));
 
     this->currentMove = 0;
-    initBoard(" rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+
     drawBoard();
 
 }
@@ -397,10 +396,7 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_pushButton_5_clicked()
 {
     if(this->currentMove < this->allMoves.at(this->currentOpening).chessMoves.size() - 1 )    {
-        initBoard(QString(this->allMoves.at(this->currentOpening).chessMoves.at(this->currentMove)));
-        drawBoard();
         this->currentMove++;
-    } else {
         initBoard(QString(this->allMoves.at(this->currentOpening).chessMoves.at(this->currentMove)));
         drawBoard();
     }
@@ -412,8 +408,23 @@ void MainWindow::on_pushButton_4_clicked()
         this->currentMove--;
         initBoard(QString(this->allMoves.at(this->currentOpening).chessMoves.at(this->currentMove)));
         drawBoard();
-    } else {
-        initBoard(" rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-        drawBoard();
     }
+}
+
+void MainWindow::on_pushButton_6_clicked()
+{
+    ui->pushButton->hide();
+    ui->pushButton_2->hide();
+    ui->pushButton_3->hide();
+    ui->pushButton_4->hide();
+    ui->pushButton_5->hide();
+    ui->pushButton_6->hide();
+    showFullScreen();
+
+
+    this->timer->setInterval(500);
+
+    timer->start();
+
+
 }

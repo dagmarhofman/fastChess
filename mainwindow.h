@@ -32,6 +32,7 @@ struct chessMoves {
     QStringList chessMoves;
 };
 
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -48,7 +49,8 @@ public:
     void drawFigure(boardElement);
     void swapBoard();
     void parseMovesXML();
-    void parseMoves();
+
+    QTimer *timer;
     ~MainWindow();
 
 private slots:
@@ -62,6 +64,10 @@ private slots:
 
     void on_pushButton_4_clicked();
 
+    void showFullScreen();
+    void on_pushButton_6_clicked();
+    void timerSlot();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
@@ -70,6 +76,8 @@ private:
     QList<chessMoves> allMoves;
     int currentOpening;
     int currentMove;
+    int openingShowCount;
+
 };
 
 #endif // MAINWINDOW_H
