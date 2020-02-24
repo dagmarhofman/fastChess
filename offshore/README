@@ -1,1 +1,8 @@
 This cruft generates a resource document file from any chess pgn file.
+
+I used an application from: https://github.com/popovb/Json2Xml
+
+For the xml conversion.
+
+Note: the strip.c solution is obsolete.
+

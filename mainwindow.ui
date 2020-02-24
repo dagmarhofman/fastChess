@@ -95,7 +95,7 @@
       <x>940</x>
       <y>140</y>
       <width>591</width>
-      <height>191</height>
+      <height>311</height>
      </rect>
     </property>
     <property name="font">
@@ -106,12 +106,15 @@
     <property name="text">
      <string>Opening</string>
     </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QLabel" name="variantLabel">
     <property name="geometry">
      <rect>
       <x>940</x>
-      <y>350</y>
+      <y>500</y>
       <width>491</width>
       <height>191</height>
      </rect>

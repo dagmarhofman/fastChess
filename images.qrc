@@ -12,7 +12,6 @@
         <file>images/white_pawn.png</file>
         <file>images/white_queen.png</file>
         <file>images/white_rook.png</file>
-        <file>moves.txt</file>
         <file>moves.xml</file>
     </qresource>
 </RCC>
