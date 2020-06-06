@@ -10,6 +10,9 @@
 #include <QMessageBox>
 #include <QtXml>
 #include <QFile>
+
+#include "dialog.h"
+
 namespace Ui {
     class MainWindow;
 }
@@ -47,8 +50,6 @@ public:
     void initBoard(QString fen);
     void drawBoard();
     void drawFigure(boardElement);
-    void swapBoard();
-    void parseMovesXML();
 
     QTimer *timer;
     ~MainWindow();
@@ -64,12 +65,17 @@ private slots:
 
     void on_pushButton_4_clicked();
 
-    void showFullScreen();
-    void on_pushButton_6_clicked();
+    void showFullScreen(bool mode);
+
     void timerSlot();
+    void timerStart( int delay );
+    void timerStop();
+    void swapBoard();
+    void parseMovesXML(QString filename);
 
 private:
     Ui::MainWindow *ui;
+    Dialog *myPanel;
     QGraphicsScene *scene;
     QGraphicsPixmapItem *figure;
     bool boardViewBlack = false;
@@ -77,7 +83,7 @@ private:
     int currentOpening;
     int currentMove;
     int openingShowCount;
-
+    QString xmlDir;
 };
 
 #endif // MAINWINDOW_H

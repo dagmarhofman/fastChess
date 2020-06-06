@@ -15,7 +15,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->currentOpening = 0;
     this->openingShowCount = 0;
 
-    parseMovesXML();
     for(int i=0;i<allMoves.size();i++) {
         qDebug() << i << " " << allMoves.at(i).opening;
     }
@@ -32,9 +31,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->variantLabel->setStyleSheet("color: blue;");
 
     this->timer = new QTimer(this);
-
     connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
 
+
+    myPanel = new Dialog(this);
+    connect(myPanel, SIGNAL(parseMovesXML(QString)), this, SLOT(parseMovesXML(QString)));
+    connect(myPanel, SIGNAL(timerStart(int)), this, SLOT(timerStart(int)));
+    connect(myPanel, SIGNAL(timerStop()), this, SLOT(timerStop()));
+    connect(myPanel, SIGNAL(swapBoard()), this, SLOT(swapBoard()));
+    connect(myPanel, SIGNAL(fullScreen(bool)), this, SLOT(showFullScreen(bool)));
+    this->myPanel->show();
 }
 
 MainWindow::~MainWindow()
@@ -43,15 +49,26 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::showFullScreen()
+void MainWindow::timerStart( int val )
 {
-    QMainWindow::showFullScreen();
+    this->timer->setInterval(val);
+    this->timer->start();
 }
-void MainWindow::parseMovesXML()
+
+void MainWindow::timerStop()
+{
+    this->timer->stop();
+}
+
+void MainWindow::showFullScreen(bool mode)
+{
+    mode ? QMainWindow::showFullScreen() : QMainWindow::showNormal();
+}
+void MainWindow::parseMovesXML( QString filename )
 {
     QDomDocument doc;
 
-    QFile file(":/moves.xml");
+    QFile file( filename );
     if(!file.open(QIODevice::ReadOnly)){
         qDebug() <<"Could not read file";
         return;
@@ -101,6 +118,8 @@ void MainWindow::parseMovesXML()
 
 void MainWindow::timerSlot()
 {
+    myPanel->setMoveNum(this->currentMove);
+
     if(this->currentMove < this->allMoves.at(this->currentOpening).chessMoves.size() - 1 )    {
         this->currentMove++;
         initBoard(QString(this->allMoves.at(this->currentOpening).chessMoves.at(this->currentMove)));
@@ -119,7 +138,7 @@ void MainWindow::timerSlot()
 
             this->currentMove = 0;
 
-            if( this->openingShowCount > 12 ) {
+            if( this->openingShowCount > 1) {
                 this->currentOpening++;
                 this->openingShowCount = 0;
             }
@@ -310,6 +329,7 @@ void MainWindow::initBoard( QString fen )
 void MainWindow :: swapBoard()
 {
     this->boardViewBlack = !this->boardViewBlack;
+    drawBoard();
 }
 
 void MainWindow::drawBoard()
@@ -357,7 +377,7 @@ void MainWindow::drawBoard()
 void MainWindow::on_pushButton_clicked()
 {
     swapBoard();
-    drawBoard();
+
 }
 
 void MainWindow::on_pushButton_2_clicked()
@@ -409,22 +429,4 @@ void MainWindow::on_pushButton_4_clicked()
         initBoard(QString(this->allMoves.at(this->currentOpening).chessMoves.at(this->currentMove)));
         drawBoard();
     }
-}
-
-void MainWindow::on_pushButton_6_clicked()
-{
-    ui->pushButton->hide();
-    ui->pushButton_2->hide();
-    ui->pushButton_3->hide();
-    ui->pushButton_4->hide();
-    ui->pushButton_5->hide();
-    ui->pushButton_6->hide();
-    showFullScreen();
-
-
-    this->timer->setInterval(500);
-
-    timer->start();
-
-
 }
