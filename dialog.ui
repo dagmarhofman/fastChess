@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>257</width>
+    <width>289</width>
     <height>455</height>
    </rect>
   </property>
@@ -114,7 +114,7 @@
     </rect>
    </property>
    <property name="minimum">
-    <number>50</number>
+    <number>1</number>
    </property>
    <property name="maximum">
     <number>50000</number>
@@ -152,19 +152,6 @@
     <string>Full screen</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>190</y>
-     <width>91</width>
-     <height>25</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QCheckBox" name="checkBox_5">
    <property name="geometry">
     <rect>
@@ -176,6 +163,51 @@
    </property>
    <property name="text">
     <string>ECO filter</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>190</y>
+     <width>41</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>A</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>B</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>C</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>D</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>E</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QSpinBox" name="spinBox_2">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>190</y>
+     <width>48</width>
+     <height>26</height>
+    </rect>
    </property>
   </widget>
  </widget>

@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
 
+    this->filterActive = false;
 
     myPanel = new Dialog(this);
     connect(myPanel, SIGNAL(parseMovesXML(QString)), this, SLOT(parseMovesXML(QString)));
@@ -40,8 +41,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(myPanel, SIGNAL(timerStop()), this, SLOT(timerStop()));
     connect(myPanel, SIGNAL(swapBoard()), this, SLOT(swapBoard()));
     connect(myPanel, SIGNAL(fullScreen(bool)), this, SLOT(showFullScreen(bool)));
-    connect(myPanel, SIGNAL(doFilter(QString)), this, SLOT(filterSlot(QString)));
+    connect(myPanel, SIGNAL(doFilter(QString, bool)), this, SLOT(filterSlot(QString,bool)));
     this->myPanel->show();
+    this->parseMovesXML(myPanel->getCurrentXML());
 }
 
 MainWindow::~MainWindow()
@@ -119,28 +121,32 @@ void MainWindow::parseMovesXML( QString filename )
 
 }
 
-void MainWindow::filterSlot(QString eco)
+void MainWindow::filterSlot(QString eco, bool active)
 {
-    int i;
-    for( i = 0; i < this->allMoves.size() ; i++) {
-        chessMoves tmp = this->allMoves.at(i);
-        tmp.display = false;
-
-        qDebug() << "TEST" << tmp.eco << "TEST" << eco << "TEST";
-        if( tmp.eco.compare(eco) == 0  )
-            tmp.display = true;
-
-        this->allMoves.replace(i,tmp );
-    }
-    this->currentOpening = 0;
+    this->filterActive = active;
+    this->currentFilter = eco;
+    //this->currentOpening = 0;
+    qDebug() << "qctive " << this->filterActive << " eco " << this->currentFilter;
 }
 
 void MainWindow::timerSlot()
 {
-    myPanel->setMoveNum(this->currentMove);
 
-    while( this->allMoves.at(this->currentOpening).display == false )
-        this->currentOpening++;
+    myPanel->setMoveNum(this->currentMove);
+    if( this->filterActive ) {
+        while(  this->allMoves.at(this->currentOpening).eco.compare(this->currentFilter) != 0  && this->currentOpening < this->allMoves.size() - 2) {
+            this->currentOpening++;
+        }
+    }
+
+    if( this->currentOpening > this->allMoves.size() - 2 ) {
+        this->currentOpening = 0;
+    }
+
+//    if(  this->filterActive && this->allMoves.at(this->currentOpening).eco.compare(this->currentFilter) != 0 ) {
+//        this->currentOpening = 0;
+  //      return;
+   // }
 
 
     //draw next move
@@ -163,9 +169,17 @@ void MainWindow::timerSlot()
 
             this->currentMove = 0;
 
-            if( this->openingShowCount > 1) {
+            if( this->openingShowCount > 2) {
                 this->currentOpening++;
                 this->openingShowCount = 0;
+            }
+
+
+            if(  this->filterActive && this->allMoves.at(this->currentOpening).eco.compare(this->currentFilter) != 0 ) {
+                this->currentOpening = 0;
+                initBoard(" rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+                drawBoard();
+                return;
             }
 
 
@@ -185,7 +199,7 @@ void MainWindow::timerSlot()
 void MainWindow::drawFigure( boardElement el )
 {
     switch( el.piece ) {
-        case 'r':
+        case Rook:
         if( el.color == Black )
             figure = scene->addPixmap(QPixmap("://images/black_rook.png"));
         else if( el.color == White )
@@ -286,8 +300,8 @@ void MainWindow::initBoard( QString fen )
         {
             for (int j = 0; j < thisChar; j++)
             {
+
                 board[rowNum][colNum].piece = Empty;
-                board[rowNum][colNum].color = White;
                 colNum++;
             }
         } else {
@@ -372,6 +386,7 @@ void MainWindow::drawBoard()
             QBrush brush;
             if(isWhite) brush = QBrush(Qt::white);
             else brush = QBrush(Qt::gray);
+
             scene->addRect(x, y, 100, 100, QPen(Qt::black), brush);
             if(isWhite) isWhite = false;
             else isWhite = true;
@@ -386,6 +401,7 @@ void MainWindow::drawBoard()
     {
         for(int row = 0; row < 8; row++ )
         {
+     \
             if( this->boardViewBlack ) {
                 board[row][col].xPos = col * 100;
                 board[row][col].yPos = (7 - row) * 100;

@@ -19,6 +19,7 @@ public:
     explicit Dialog(QWidget *parent = nullptr);
     void setMoveNum(int val);
     void loadXMLDir(QString dir);
+     QString getCurrentXML();
     ~Dialog();
 private slots:
     void on_pushButton_4_clicked();
@@ -30,13 +31,21 @@ private slots:
 
     void on_checkBox_4_clicked(bool checked);
 
+    void on_comboBox_currentIndexChanged(const QString &arg1);
+
+    void on_spinBox_2_valueChanged(int arg1);
+
+    void on_pushButton_4_clicked(bool checked);
+
+
+
 signals:
     void timerStart(int val);
     void timerStop();
     void swapBoard();
     void parseMovesXML(QString filename);
     void fullScreen(bool mode);
-    void doFilter(QString eco);
+    void doFilter(QString eco, bool active);
 private:
     Ui::Dialog *ui;
     QWindow *win;

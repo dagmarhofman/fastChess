@@ -73,7 +73,7 @@ private slots:
     void timerStop();
     void swapBoard();
     void parseMovesXML(QString filename);
-    void filterSlot( QString eco );
+    void filterSlot( QString eco, bool filter );
 
 private:
     Ui::MainWindow *ui;
@@ -85,6 +85,8 @@ private:
     int currentOpening;
     int currentMove;
     int openingShowCount;
+    bool filterActive;
+    QString currentFilter;
     QString xmlDir;
 };
 
