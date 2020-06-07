@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(myPanel, SIGNAL(timerStop()), this, SLOT(timerStop()));
     connect(myPanel, SIGNAL(swapBoard()), this, SLOT(swapBoard()));
     connect(myPanel, SIGNAL(fullScreen(bool)), this, SLOT(showFullScreen(bool)));
+    connect(myPanel, SIGNAL(doFilter(QString)), this, SLOT(filterSlot(QString)));
     this->myPanel->show();
 }
 
@@ -64,6 +65,7 @@ void MainWindow::showFullScreen(bool mode)
 {
     mode ? QMainWindow::showFullScreen() : QMainWindow::showNormal();
 }
+
 void MainWindow::parseMovesXML( QString filename )
 {
     QDomDocument doc;
@@ -91,10 +93,12 @@ void MainWindow::parseMovesXML( QString filename )
     QString FEN;
     for (; !elt.isNull(); elt = elt.nextSiblingElement("item")) {
 
-        fieldRecord.eco = elt.firstChildElement("ECO").text().toUtf8();
+        QString tmp;
+        tmp = elt.firstChildElement("ECO").text().toUtf8();
+        fieldRecord.eco = tmp.trimmed() ;
         fieldRecord.opening = elt.firstChildElement("Opening").text().toUtf8();
         fieldRecord.variant = elt.firstChildElement("Variation").text().toUtf8();
-
+        fieldRecord.display = true;
 
         QDomElement moves = elt.firstChildElement("Moves");
         QDomElement moveItem = moves.firstChildElement("item");
@@ -115,22 +119,43 @@ void MainWindow::parseMovesXML( QString filename )
 
 }
 
+void MainWindow::filterSlot(QString eco)
+{
+    int i;
+    for( i = 0; i < this->allMoves.size() ; i++) {
+        chessMoves tmp = this->allMoves.at(i);
+        tmp.display = false;
+
+        qDebug() << "TEST" << tmp.eco << "TEST" << eco << "TEST";
+        if( tmp.eco.compare(eco) == 0  )
+            tmp.display = true;
+
+        this->allMoves.replace(i,tmp );
+    }
+    this->currentOpening = 0;
+}
 
 void MainWindow::timerSlot()
 {
     myPanel->setMoveNum(this->currentMove);
 
+    while( this->allMoves.at(this->currentOpening).display == false )
+        this->currentOpening++;
+
+
+    //draw next move
     if(this->currentMove < this->allMoves.at(this->currentOpening).chessMoves.size() - 1 )    {
         this->currentMove++;
         initBoard(QString(this->allMoves.at(this->currentOpening).chessMoves.at(this->currentMove)));
         drawBoard();
-    } else {
+    } else { //last move ?
 
+        //draw that last move
         if(this->currentMove < this->allMoves.at(this->currentOpening).chessMoves.size() - 1 )    {
             initBoard(QString(this->allMoves.at(this->currentOpening).chessMoves.at(this->currentMove)));
             drawBoard();
             this->currentMove++;
-        } else {
+        } else { // check next opening
             initBoard(QString(this->allMoves.at(this->currentOpening).chessMoves.at(this->currentMove)));
             drawBoard();
 

@@ -29,6 +29,7 @@ struct boardElement {
 };
 
 struct chessMoves {
+    bool display;
     QString eco;
     QString opening;
     QString variant;
@@ -72,6 +73,7 @@ private slots:
     void timerStop();
     void swapBoard();
     void parseMovesXML(QString filename);
+    void filterSlot( QString eco );
 
 private:
     Ui::MainWindow *ui;

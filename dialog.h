@@ -36,6 +36,7 @@ signals:
     void swapBoard();
     void parseMovesXML(QString filename);
     void fullScreen(bool mode);
+    void doFilter(QString eco);
 private:
     Ui::Dialog *ui;
     QWindow *win;

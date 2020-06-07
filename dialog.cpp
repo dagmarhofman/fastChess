@@ -24,11 +24,13 @@ void Dialog :: loadXMLDir(QString dir)
     QDir directory(this->xmlDir);
 
     QStringList xmlFiles = directory.entryList(QStringList() << "*.xml" ,QDir::Files);
-
+/*
     int i;
     for( i = 0 ; i < xmlFiles.length() ; i++ ) {
         ui->listWidget->addItem(xmlFiles.at(i)); //(QListWidgetItem());
     }
+
+*/
     this->currentXML = this->xmlDir;
     this->currentXML.append( xmlFiles.at(0) );
 
@@ -67,6 +69,9 @@ void Dialog::on_checkBox_clicked(bool checked)
 void Dialog::on_checkBox_5_clicked(bool checked)
 {
     ui->lineEdit->setEnabled(checked);
+    if( checked ) {
+        emit doFilter( ui->lineEdit->text());
+    }
 }
 
 void Dialog::on_checkBox_4_clicked(bool checked)
